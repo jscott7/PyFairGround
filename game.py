@@ -32,3 +32,5 @@ while running:
 
     # Flip the display
     pygame.display.flip()
+
+pygame.quit()
