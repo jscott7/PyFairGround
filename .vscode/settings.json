@@ -1,0 +1,6 @@
+{
+    "python.pythonPath": "/home/jonathan/anaconda3/bin/python",
+    "python.linting.pylintArgs": [
+        "--extensionpkg-whitelist=lxml" // Fix Visual Studio Code lint problems
+    ]
+}
