@@ -55,13 +55,28 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.top < 0:
             self.kill()
 
+class Target(pygame.sprite.Sprite):
+    """ Target objects """
+    def __init__(self, ypos, direction):
+        super(Target, self).__init__()
+        self.surf = pygame.Surface((10, 20))
+        self.surf.fill((255, 255, 0))
+        self.speed = 10
+        self.direction = direction
+        self.rect = self.surf.get_rect(center = (0, ypos))
+
+    def update(self):
+        self.rect.move_ip(self.speed * self.direction, 0)
+        if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
+            self.kill()
 
 # Instantiate PlayerGun
 playerGun = PlayerGun()
 
 # Create groups to hold sprites
-all_sprites = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
+targets = pygame.sprite.Group()
+all_sprites = pygame.sprite.Group()
 all_sprites.add(playerGun)
 
 # The main game loop
@@ -85,8 +100,14 @@ while running:
         bullets.add(bullet)
         all_sprites.add(bullet)
 
+    if len(targets.sprites()) == 0:
+        new_target = Target(100, 1)
+        targets.add(new_target)
+        all_sprites.add(new_target)
+
     playerGun.update(pressed_keys)
     bullets.update()
+    targets.update()
 
     screen.fill((0,0,0))
 
