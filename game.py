@@ -1,4 +1,5 @@
 import pygame
+import random
 
 # Import pygame.locals for easier access to constants
 from pygame.locals import (
@@ -59,8 +60,13 @@ class Target(pygame.sprite.Sprite):
     """ Target objects """
     def __init__(self, ypos, direction):
         super(Target, self).__init__()
-        self.surf = pygame.Surface((10, 20))
-        self.surf.fill((255, 255, 0))
+        self.surf = pygame.Surface((20, 40))
+
+        if random.randint(0, 1) == 0: 
+            self.surf.fill((255, 255, 0))
+        else:
+            self.surf.fill((255, 0, 0))
+
         self.speed = 10
         self.direction = direction
         self.rect = self.surf.get_rect(center = (0, ypos))
@@ -68,7 +74,7 @@ class Target(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.move_ip(self.speed * self.direction, 0)
-        if self.in_play == False and self.rect.right > 50:
+        if self.in_play == False and self.rect.right > 60:
             self.in_play = True
         if self.rect.right > SCREEN_WIDTH:
             self.rect.move_ip(0, 50)
@@ -114,11 +120,16 @@ while running:
             new_target = Target(100, 1)
             targets.add(new_target)
             all_sprites.add(new_target)
-        
 
     playerGun.update(pressed_keys)
     bullets.update()
     targets.update()
+
+    # Check for bullet hitting target
+    for bullet in bullets:
+        targetsHit = pygame.sprite.spritecollide(bullet, targets, True)
+        if len(targetsHit) > 0:
+            bullet.kill()
 
     screen.fill((0,0,0))
 
