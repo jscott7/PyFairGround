@@ -21,8 +21,16 @@ SCREEN_HEIGHT = 1000
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+class Counter():
+    """ Keep track of score. """
+    def __init__(self):
+        self.SCORE = 0
+
+    def UpdateScore(self):
+        self.SCORE += 1
+
 class PlayerGun(pygame.sprite.Sprite):
-    """ The Gun Controled by the player."""
+    """ The Gun Controlled by the player."""
     def __init__(self):
         super(PlayerGun, self).__init__()
         self.surf = pygame.Surface((10, 30))
@@ -86,6 +94,11 @@ class Target(pygame.sprite.Sprite):
 # Instantiate PlayerGun
 playerGun = PlayerGun()
 
+counter = Counter()
+# Create font for score
+font = pygame.font.SysFont(None, 48)
+BLUE = pygame.Color(0, 0, 255)
+
 max_targets = 20
 
 # Create groups to hold sprites
@@ -130,13 +143,20 @@ while running:
         targetsHit = pygame.sprite.spritecollide(bullet, targets, True)
         if len(targetsHit) > 0:
             bullet.kill()
+            counter.UpdateScore()
 
     screen.fill((0,0,0))
+
+    # blit is essentially copying the pixels from the sprite/image onto the screen surface
+    # Update the score
+    img = font.render(str(counter.SCORE), True, BLUE)
+    screen.blit(img, (SCREEN_WIDTH - 100, 20))
 
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
 
     # Flip the display
+    # Updates the full display surface to the screen
     pygame.display.flip()
 
     clock.tick(30)
