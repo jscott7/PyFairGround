@@ -48,7 +48,6 @@ class PlayerGun(pygame.sprite.Sprite):
         if self.rect.right > SCREEN_WIDTH:
             self.rect.right = SCREEN_WIDTH
 
-
 class Bullet(pygame.sprite.Sprite):
     """ Bullet fired by the gun."""
     def __init__(self, xpos, ypos):
@@ -90,6 +89,16 @@ class Target(pygame.sprite.Sprite):
         if self.rect.left < 0:
             self.kill()
   
+class Ammo(pygame.sprite.Sprite):
+    """Ammo"""
+    def __init__(self, xpos):
+        super(Ammo, self).__init__()
+        self.surf = pygame.Surface((10, 20))
+        self.surf.fill((255, 255, 255))
+        self.rect = self.surf.get_rect(center = ( xpos, SCREEN_HEIGHT - 50 ))
+
+    def UseAmmo(self):
+        self.kill()
 
 # Instantiate PlayerGun
 playerGun = PlayerGun()
@@ -100,12 +109,19 @@ font = pygame.font.SysFont(None, 48)
 BLUE = pygame.Color(0, 0, 255)
 
 max_targets = 20
+ammo_count = 20
 
 # Create groups to hold sprites
 bullets = pygame.sprite.Group()
 targets = pygame.sprite.Group()
+ammo = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(playerGun)
+
+for i in range(1, ammo_count):
+    singleAmmo = Ammo(20 * i)
+    ammo.add(singleAmmo)
+    all_sprites.add(singleAmmo)
 
 # The main game loop
 running = True
@@ -127,10 +143,13 @@ while running:
         bullet = Bullet(playerGun.rect.left + (playerGun.rect.width / 2), playerGun.rect.top)
         bullets.add(bullet)
         all_sprites.add(bullet)
-
+        ammo_count -= 1
+        if ammo_count > 0:
+            ammo.sprites()[-1].UseAmmo()
+         
     if len(targets.sprites()) < max_targets:
         if all(x.in_play for x in targets.sprites()):
-            new_target = Target(100, 1)
+            new_target = Target(250, 1)
             targets.add(new_target)
             all_sprites.add(new_target)
 
@@ -144,6 +163,10 @@ while running:
         if len(targetsHit) > 0:
             bullet.kill()
             counter.UpdateScore()
+
+    # Check for out of ammo
+    if ammo_count == 1 and len(bullets) == 0:
+        running = False
 
     screen.fill((0,0,0))
 
@@ -160,5 +183,15 @@ while running:
     pygame.display.flip()
 
     clock.tick(30)
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == KEYDOWN:
+                running = False    
+
+    img = font.render("GAME OVER!! HIT ANY KEY TO EXIT" , True, BLUE)
+    screen.blit(img, (SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2))
+    pygame.display.flip()
 
 pygame.quit()
