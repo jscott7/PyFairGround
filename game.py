@@ -90,8 +90,15 @@ class Target(pygame.sprite.Sprite):
             self.kill()
   
 class Ammo(pygame.sprite.Sprite):
-    """Ammo"""
+    """An available bullet displayed at the bottom of the screen"""
     def __init__(self, xpos):
+        """
+        Parameters
+        ----------
+
+        xpos : int
+            The x screen position of the ammo sprite
+        """
         super(Ammo, self).__init__()
         self.surf = pygame.Surface((10, 20))
         self.surf.fill((255, 255, 255))
@@ -114,14 +121,25 @@ ammo_count = 20
 # Create groups to hold sprites
 bullets = pygame.sprite.Group()
 targets = pygame.sprite.Group()
-ammo = pygame.sprite.Group()
+ammunition = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(playerGun)
 
+# Initialize the ammunition 
 for i in range(1, ammo_count):
-    singleAmmo = Ammo(20 * i)
-    ammo.add(singleAmmo)
-    all_sprites.add(singleAmmo)
+    cartridge = Ammo(20 * i)
+    ammunition.add(cartridge)
+    all_sprites.add(cartridge)
+
+# TODO This is a bit buggy at the moment it doesn't update the ammo_count/sprite list correctly
+def AddMoreAmmo(ammunition, all_sprites, ammo_count):
+    remaining_ammo = len(ammunition)
+    for i in range(1, 5):
+        cartridge = Ammo(20 * (i + remaining_ammo))
+        ammunition.add(cartridge)
+        all_sprites.add(cartridge)
+    
+    return ammo_count + 5
 
 # The main game loop
 running = True
@@ -145,7 +163,7 @@ while running:
         all_sprites.add(bullet)
         ammo_count -= 1
         if ammo_count > 0:
-            ammo.sprites()[-1].UseAmmo()
+            ammunition.sprites()[-1].UseAmmo()
          
     if len(targets.sprites()) < max_targets:
         if all(x.in_play for x in targets.sprites()):
@@ -168,13 +186,19 @@ while running:
     if ammo_count == 1 and len(bullets) == 0:
         running = False
 
+    # TODO : Add a target that can add more ammunition
+    # if ammo_count == 2:
+    #   ammo_count = AddMoreAmmo(ammunition, all_sprites, ammo_count)
+
     screen.fill((0,0,0))
 
-    # blit is essentially copying the pixels from the sprite/image onto the screen surface
     # Update the score
     img = font.render(str(counter.SCORE), True, BLUE)
+   
+    # blit is essentially copying the pixels from the sprite/image surface onto the screen surface
     screen.blit(img, (SCREEN_WIDTH - 100, 20))
 
+    # Draw all the updated sprites
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
 
