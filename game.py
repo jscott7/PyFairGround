@@ -127,7 +127,7 @@ all_sprites = pygame.sprite.Group()
 all_sprites.add(playerGun)
 
 # Initialize the ammunition 
-for i in range(1, starting_ammunition):
+for i in range(1, starting_ammunition + 1):
     cartridge = Ammo(20 * i)
     ammunition.add(cartridge)
     all_sprites.add(cartridge)
