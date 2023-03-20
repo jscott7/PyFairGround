@@ -111,12 +111,13 @@ class Ammo(pygame.sprite.Sprite):
 playerGun = PlayerGun()
 
 counter = Counter()
+
 # Create font for score
 font = pygame.font.SysFont(None, 48)
 BLUE = pygame.Color(0, 0, 255)
 
 max_targets = 20
-ammo_count = 20
+starting_ammunition = 10
 
 # Create groups to hold sprites
 bullets = pygame.sprite.Group()
@@ -126,20 +127,17 @@ all_sprites = pygame.sprite.Group()
 all_sprites.add(playerGun)
 
 # Initialize the ammunition 
-for i in range(1, ammo_count):
+for i in range(1, starting_ammunition):
     cartridge = Ammo(20 * i)
     ammunition.add(cartridge)
     all_sprites.add(cartridge)
 
-# TODO This is a bit buggy at the moment it doesn't update the ammo_count/sprite list correctly
-def AddMoreAmmo(ammunition, all_sprites, ammo_count):
+def AddMoreAmmo(ammunition, all_sprites, number_to_add):
     remaining_ammo = len(ammunition)
-    for i in range(1, 5):
+    for i in range(number_to_add):
         cartridge = Ammo(20 * (i + remaining_ammo))
         ammunition.add(cartridge)
         all_sprites.add(cartridge)
-    
-    return ammo_count + 5
 
 # The main game loop
 running = True
@@ -161,8 +159,8 @@ while running:
         bullet = Bullet(playerGun.rect.left + (playerGun.rect.width / 2), playerGun.rect.top)
         bullets.add(bullet)
         all_sprites.add(bullet)
-        ammo_count -= 1
-        if ammo_count > 0:
+       
+        if len(ammunition) > 0:
             ammunition.sprites()[-1].UseAmmo()
          
     if len(targets.sprites()) < max_targets:
@@ -183,13 +181,14 @@ while running:
             counter.UpdateScore()
 
     # Check for out of ammo
-    if ammo_count == 1 and len(bullets) == 0:
+    if len(ammunition) == 0 and len(bullets) == 0:
         running = False
 
     # TODO : Add a target that can add more ammunition
-    # if ammo_count == 2:
-    #   ammo_count = AddMoreAmmo(ammunition, all_sprites, ammo_count)
+#    if len(ammunition) == 2:
+#       AddMoreAmmo(ammunition, all_sprites, 5) 
 
+    # Fille surface with solid color, in this case black = (0,0,0)
     screen.fill((0,0,0))
 
     # Update the score
