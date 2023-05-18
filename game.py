@@ -1,5 +1,6 @@
 import pygame
 import random
+import AddAmmoTarget
 
 # Import pygame.locals for easier access to constants
 from pygame.locals import (
@@ -112,6 +113,8 @@ playerGun = PlayerGun()
 
 counter = Counter()
 
+addAmmoTarget = AddAmmoTarget.AddAmmoTarget(50, 50)
+
 # Create font for score
 font = pygame.font.SysFont(None, 48)
 BLUE = pygame.Color(0, 0, 255)
@@ -123,8 +126,11 @@ starting_ammunition = 10
 bullets = pygame.sprite.Group()
 targets = pygame.sprite.Group()
 ammunition = pygame.sprite.Group()
+addAmmoTargets = pygame.sprite.Group()
+addAmmoTargets.add(addAmmoTarget)
 all_sprites = pygame.sprite.Group()
 all_sprites.add(playerGun)
+all_sprites.add(addAmmoTarget)
 
 # Initialize the ammunition 
 for i in range(1, starting_ammunition + 1):
@@ -179,16 +185,16 @@ while running:
         if len(targetsHit) > 0:
             bullet.kill()
             counter.UpdateScore()
+        addAmmoTargetHit = pygame.sprite.spritecollide(bullet, addAmmoTargets, True)
+        if len(addAmmoTargetHit) > 0:
+            bullet.kill()
+            AddMoreAmmo(ammunition, all_sprites, 5)
 
     # Check for out of ammo
     if len(ammunition) == 0 and len(bullets) == 0:
         running = False
 
-    # TODO : Add a target that can add more ammunition
-#    if len(ammunition) == 2:
-#       AddMoreAmmo(ammunition, all_sprites, 5) 
-
-    # Fille surface with solid color, in this case black = (0,0,0)
+    # Fill surface with solid color, in this case black = (0,0,0)
     screen.fill((0,0,0))
 
     # Update the score
