@@ -1,6 +1,6 @@
 import pygame
 import random
-import AddAmmoTarget
+import addammotarget
 
 # Import pygame.locals for easier access to constants
 from pygame.locals import (
@@ -113,7 +113,7 @@ playerGun = PlayerGun()
 
 counter = Counter()
 
-addAmmoTarget = AddAmmoTarget.AddAmmoTarget(50, 50)
+addAmmoTarget = addammotarget.AddAmmoTarget(50, 50)
 
 # Create font for score
 font = pygame.font.SysFont(None, 48)
